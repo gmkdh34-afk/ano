@@ -25,7 +25,7 @@ if [ -d "$ANO_DIR" ]; then
   cd "$ANO_DIR" && git pull
 else
   echo "📥 코드 다운로드..."
-  git clone https://github.com/YOUR_USERNAME/ano.git "$ANO_DIR"
+  git clone https://github.com/gmkdh34-afk/ano.git "$ANO_DIR"
   cd "$ANO_DIR"
 fi
 
