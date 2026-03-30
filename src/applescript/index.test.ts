@@ -54,4 +54,30 @@ describe('AppleScript Bridge', () => {
     const result = await moveNote('id1', ['존재하지않는폴더'])
     expect(result).toBe(false)
   })
+
+  it('getNotesBatch: TOTAL: 라인을 제외하고 본문 포함 Note 배열 반환', async () => {
+    const mockOutput = 'TOTAL:100\nid1|||제목1|||폴더A|||본문내용1\nid2|||제목2|||폴더B|||본문내용2\n'
+    vi.mocked(execFile).mockImplementation((_cmd, _args, cb: any) => {
+      cb(null, mockOutput, '')
+    })
+
+    const { getNotesBatch } = await import('./index.js')
+    const notes = await getNotesBatch(0, 50)
+    expect(notes).toEqual([
+      { id: 'id1', title: '제목1', folder: '폴더A', body: '본문내용1' },
+      { id: 'id2', title: '제목2', folder: '폴더B', body: '본문내용2' },
+    ])
+    expect(notes).toHaveLength(2)
+  })
+
+  it('getTotalNoteCount: TOTAL:N 에서 숫자 파싱', async () => {
+    const mockOutput = 'TOTAL:247\nid1|||제목1|||폴더A|||본문\n'
+    vi.mocked(execFile).mockImplementation((_cmd, _args, cb: any) => {
+      cb(null, mockOutput, '')
+    })
+
+    const { getTotalNoteCount } = await import('./index.js')
+    const count = await getTotalNoteCount()
+    expect(count).toBe(247)
+  })
 })
