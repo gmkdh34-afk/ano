@@ -1,0 +1,27 @@
+{
+  "name": "ano",
+  "version": "1.0.0",
+  "description": "Apple Notes Organizer — iPhone 메모 자동 정리 CLI",
+  "type": "module",
+  "bin": {
+    "ano": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "commander": "^12.0.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  }
+}
