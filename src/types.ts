@@ -34,6 +34,7 @@ export interface ClassificationResult {
   noteTitle: string
   targetPath: string[]
   engine: 'claude-cli' | 'keyword'
+  success: boolean
 }
 
 export interface RunResult {

@@ -20,54 +20,66 @@ function execFileAsync(cmd: string, args: string[]): Promise<{ stdout: string }>
 
 async function runScript(scriptName: string, args: string[] = []): Promise<string> {
   const scriptPath = resolve(SCRIPTS_DIR, scriptName)
+  const { stdout } = await execFileAsync('osascript', [scriptPath, ...args])
+  return stdout.trim()
+}
+
+export async function getNoteIds(): Promise<Note[]> {
   try {
-    const { stdout } = await execFileAsync('osascript', [scriptPath, ...args])
-    return stdout.trim()
+    const output = await runScript('read_note_ids.applescript')
+    if (!output) return []
+    return output
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        const [id, title, folder] = line.split('|||')
+        return { id: id.trim(), title: title.trim(), folder: folder.trim() }
+      })
   } catch (err) {
+    throw new Error(`Apple Notes 스캔 실패: ${err instanceof Error ? err.message : err}`)
+  }
+}
+
+export async function getNoteBody(noteId: string): Promise<string> {
+  try {
+    return await runScript('read_note_body.applescript', [noteId])
+  } catch {
     return ''
   }
 }
 
-export async function getNoteIds(): Promise<Note[]> {
-  const output = await runScript('read_note_ids.applescript')
-  if (!output) return []
-  return output
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => {
-      const [id, title, folder] = line.split('|||')
-      return { id: id.trim(), title: title.trim(), folder: folder.trim() }
-    })
-}
-
-export async function getNoteBody(noteId: string): Promise<string> {
-  return runScript('read_note_body.applescript', [noteId])
-}
-
 export async function getNotesBatch(offset: number, limit: number): Promise<Note[]> {
-  const output = await runScript('read_notes_batch.applescript', [
-    String(offset),
-    String(limit),
-  ])
-  if (!output) return []
-  const lines = output.split('\n').filter(Boolean)
-  const dataLines = lines.filter((l) => !l.startsWith('TOTAL:'))
-  return dataLines.map((line) => {
-    const [id, title, folder, ...bodyParts] = line.split('|||')
-    return {
-      id: id.trim(),
-      title: title.trim(),
-      folder: folder.trim(),
-      body: bodyParts.join('|||').trim(),
-    }
-  })
+  try {
+    const output = await runScript('read_notes_batch.applescript', [
+      String(offset),
+      String(limit),
+    ])
+    if (!output) return []
+    const lines = output.split('\n').filter(Boolean)
+    const dataLines = lines.filter((l) => !l.startsWith('TOTAL:'))
+    return dataLines.map((line) => {
+      const [id, title, folder, ...bodyParts] = line.split('|||')
+      return {
+        id: id.trim(),
+        title: title.trim(),
+        folder: folder.trim(),
+        body: bodyParts.join('|||').trim(),
+      }
+    })
+  } catch (err) {
+    throw new Error(`배치 읽기 실패 (offset=${offset}): ${err instanceof Error ? err.message : err}`)
+  }
 }
 
 export async function getTotalNoteCount(): Promise<number> {
-  const output = await runScript('read_notes_batch.applescript', ['0', '1'])
-  const firstLine = output.split('\n')[0] ?? ''
-  const match = firstLine.match(/^TOTAL:(\d+)/)
-  return match ? parseInt(match[1], 10) : 0
+  try {
+    const output = await runScript('read_notes_batch.applescript', ['0', '1'])
+    const firstLine = output.split('\n')[0] ?? ''
+    const match = firstLine.match(/^TOTAL:(\d+)/)
+    return match ? parseInt(match[1], 10) : 0
+  } catch (err) {
+    throw new Error(`메모 수 확인 실패: ${err instanceof Error ? err.message : err}`)
+  }
 }
 
 export async function moveNote(noteId: string, folderPath: string[]): Promise<boolean> {

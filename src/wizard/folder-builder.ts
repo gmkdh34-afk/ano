@@ -14,7 +14,7 @@ async function build5Level(): Promise<Folder[]> {
   let areaIndex = 1
 
   for (const area of areaList) {
-    const prefix = `0${areaIndex}_`
+    const prefix = `${String(areaIndex).padStart(2, '0')}_`
     const areaName = `${prefix}${area}`
 
     const subInput = await clack.text({
@@ -30,7 +30,7 @@ async function build5Level(): Promise<Folder[]> {
     } else {
       let subIndex = 1
       for (const sub of subs) {
-        folders.push({ path: [areaName, `0${subIndex}_${sub}`], keywords: [] })
+        folders.push({ path: [areaName, `${String(subIndex).padStart(2, '0')}_${sub}`], keywords: [] })
         subIndex++
       }
     }

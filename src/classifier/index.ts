@@ -34,5 +34,6 @@ export async function classifyNote(
     noteTitle: note.title,
     targetPath,
     engine: usedEngine,
+    success: true,
   }
 }

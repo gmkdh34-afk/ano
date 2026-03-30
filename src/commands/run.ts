@@ -46,7 +46,8 @@ export async function runCommand(options: RunOptions): Promise<void> {
   let result
   const { getNoteIds } = await import('../applescript/index.js')
   const allNotes = await getNoteIds()
-  const unprocessedCount = allNotes.filter((n) => !processedIds.includes(n.id)).length
+  const processedSet = new Set(processedIds)
+  const unprocessedCount = allNotes.filter((n) => !processedSet.has(n.id)).length
 
   spinner.message(
     `전체: ${allNotes.length}개 / 미처리: ${unprocessedCount}개` +
@@ -76,7 +77,8 @@ export async function runCommand(options: RunOptions): Promise<void> {
   spinner.stop('완료')
 
   if (!options.dryRun) {
-    await state.addProcessedIds(result.results.map((r) => r.noteId))
+    const succeededIds = result.results.filter((r) => r.success).map((r) => r.noteId)
+    await state.addProcessedIds(succeededIds)
   }
 
   if (options.verbose || options.dryRun) {

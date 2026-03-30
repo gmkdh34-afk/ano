@@ -16,6 +16,10 @@ interface PlistOptions {
   scriptPath: string
 }
 
+function escapeXml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
 export function generatePlist(opts: PlistOptions): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
@@ -26,7 +30,7 @@ export function generatePlist(opts: PlistOptions): string {
   <string>com.ano.run</string>
   <key>ProgramArguments</key>
   <array>
-    <string>${opts.scriptPath}</string>
+    <string>${escapeXml(opts.scriptPath)}</string>
     <string>run</string>
   </array>
   <key>StartCalendarInterval</key>

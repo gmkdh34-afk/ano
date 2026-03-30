@@ -38,7 +38,7 @@ describe('Batch Runner', () => {
       }))
     )
     vi.mocked(classifyNote).mockResolvedValue({
-      noteId: 'x', noteTitle: 'x', targetPath: ['Work'], engine: 'keyword',
+      noteId: 'x', noteTitle: 'x', targetPath: ['Work'], engine: 'keyword', success: true,
     })
     vi.mocked(moveNote).mockResolvedValue(true)
 
@@ -67,7 +67,7 @@ describe('Batch Runner', () => {
       { id: 'new', title: '새메모', folder: '', body: '내용' },
     ])
     vi.mocked(classifyNote).mockResolvedValue({
-      noteId: 'new', noteTitle: '새메모', targetPath: ['Work'], engine: 'keyword',
+      noteId: 'new', noteTitle: '새메모', targetPath: ['Work'], engine: 'keyword', success: true,
     })
     vi.mocked(moveNote).mockResolvedValue(true)
 

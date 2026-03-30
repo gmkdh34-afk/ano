@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from 'fs/promises'
+import { readFile, writeFile, mkdir, unlink } from 'fs/promises'
 import { join } from 'path'
 import { homedir } from 'os'
 import yaml from 'js-yaml'
@@ -59,7 +59,15 @@ export function createStateManager(anoDir: string = DEFAULT_ANO_DIR) {
     }
   }
 
-  return { getProcessedIds, addProcessedIds, saveConfig, loadConfig, getLastRun }
+  async function resetProcessed(): Promise<void> {
+    try {
+      await unlink(processedPath)
+    } catch {
+      // 파일이 없으면 무시
+    }
+  }
+
+  return { getProcessedIds, addProcessedIds, saveConfig, loadConfig, getLastRun, resetProcessed }
 }
 
 export type StateManager = ReturnType<typeof createStateManager>

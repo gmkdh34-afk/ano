@@ -1,4 +1,4 @@
-import { getNotesBatch, getTotalNoteCount, moveNote } from '../applescript/index.js'
+import { getNotesBatch, getTotalNoteCount, moveNote, createFolder } from '../applescript/index.js'
 import { classifyNote } from '../classifier/index.js'
 import type { Method, RunResult, ClassificationResult } from '../types.js'
 
@@ -15,6 +15,7 @@ interface BatchRunOptions {
 export async function runBatch(options: BatchRunOptions): Promise<RunResult> {
   const { processedIds, method, engine, dryRun, batchSize, onBatchProgress, onProgress } = options
   const start = Date.now()
+  const processedSet = new Set(processedIds)
 
   const totalCount = await getTotalNoteCount()
   const totalBatches = Math.ceil(totalCount / batchSize)
@@ -30,7 +31,7 @@ export async function runBatch(options: BatchRunOptions): Promise<RunResult> {
     onBatchProgress(batch + 1, totalBatches)
 
     const notes = await getNotesBatch(offset, batchSize)
-    const unprocessed = notes.filter((n) => !processedIds.includes(n.id))
+    const unprocessed = notes.filter((n) => !processedSet.has(n.id))
     skipped += notes.length - unprocessed.length
 
     for (const note of unprocessed) {
@@ -40,16 +41,18 @@ export async function runBatch(options: BatchRunOptions): Promise<RunResult> {
         engine
       )
 
+      let success = true
       if (!dryRun) {
+        await createFolder(classified.targetPath)
         const moved = await moveNote(note.id, classified.targetPath)
         if (moved) succeeded++
-        else failed++
+        else { failed++; success = false }
       } else {
         succeeded++
       }
 
-      results.push(classified)
-      onProgress(++globalIndex, totalCount, classified)
+      results.push({ ...classified, success })
+      onProgress(++globalIndex, totalCount, { ...classified, success })
     }
   }
 

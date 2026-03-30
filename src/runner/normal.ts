@@ -1,4 +1,4 @@
-import { getNoteIds, getNoteBody, moveNote } from '../applescript/index.js'
+import { getNoteIds, getNoteBody, moveNote, createFolder } from '../applescript/index.js'
 import { classifyNote } from '../classifier/index.js'
 import type { Method, RunResult, ClassificationResult } from '../types.js'
 
@@ -13,9 +13,10 @@ interface NormalRunOptions {
 export async function runNormal(options: NormalRunOptions): Promise<RunResult> {
   const { processedIds, method, engine, dryRun, onProgress } = options
   const start = Date.now()
+  const processedSet = new Set(processedIds)
 
   const allNotes = await getNoteIds()
-  const unprocessed = allNotes.filter((n) => !processedIds.includes(n.id))
+  const unprocessed = allNotes.filter((n) => !processedSet.has(n.id))
   const total = unprocessed.length
 
   const results: ClassificationResult[] = []
@@ -27,16 +28,18 @@ export async function runNormal(options: NormalRunOptions): Promise<RunResult> {
     const body = await getNoteBody(note.id)
     const classified = await classifyNote({ ...note, body }, method, engine)
 
+    let success = true
     if (!dryRun) {
+      await createFolder(classified.targetPath)
       const moved = await moveNote(note.id, classified.targetPath)
       if (moved) succeeded++
-      else failed++
+      else { failed++; success = false }
     } else {
       succeeded++
     }
 
-    results.push(classified)
-    onProgress(i + 1, total, classified)
+    results.push({ ...classified, success })
+    onProgress(i + 1, total, { ...classified, success })
   }
 
   return { total, succeeded, failed, skipped: 0, durationMs: Date.now() - start, results }

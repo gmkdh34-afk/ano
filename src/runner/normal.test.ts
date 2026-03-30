@@ -33,7 +33,7 @@ describe('Normal Runner', () => {
     vi.mocked(getNoteBody).mockResolvedValue('릴스 아이디어')
     vi.mocked(classifyNote).mockResolvedValue({
       noteId: 'id1', noteTitle: '릴스 기획',
-      targetPath: ['Work', 'Marketing'], engine: 'keyword',
+      targetPath: ['Work', 'Marketing'], engine: 'keyword', success: true,
     })
     vi.mocked(moveNote).mockResolvedValue(true)
 
@@ -59,7 +59,7 @@ describe('Normal Runner', () => {
     vi.mocked(getNoteBody).mockResolvedValue('내용')
     vi.mocked(classifyNote).mockResolvedValue({
       noteId: 'id1', noteTitle: '테스트',
-      targetPath: ['Work'], engine: 'keyword',
+      targetPath: ['Work'], engine: 'keyword', success: true,
     })
 
     const { runNormal } = await import('./normal.js')

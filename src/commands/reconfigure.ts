@@ -20,6 +20,7 @@ export async function reconfigureCommand(): Promise<void> {
       message: '방식을 바꾸면 processed.json이 초기화됩니다. 계속할까요?',
     })
     if (clack.isCancel(confirm) || !confirm) return
+    await state.resetProcessed()
     await runSetup()
   }
 
@@ -45,6 +46,7 @@ export async function reconfigureCommand(): Promise<void> {
       initialValue: false,
     })
     if (clack.isCancel(confirm) || !confirm) return
+    await state.resetProcessed()
     await runSetup()
   }
 }
