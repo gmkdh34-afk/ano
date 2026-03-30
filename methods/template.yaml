@@ -1,0 +1,9 @@
+id: "my-method"
+name: "나만의 방식"
+description: "이 방식에 대한 한 줄 설명"
+type: "custom"
+folders:
+  - path: ["최상위폴더", "하위폴더"]
+    keywords: ["키워드1", "키워드2", "키워드3"]
+  - path: ["다른폴더"]
+    keywords: ["다른키워드"]

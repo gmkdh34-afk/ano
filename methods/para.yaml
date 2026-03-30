@@ -1,0 +1,13 @@
+id: "para"
+name: "PARA"
+description: "Projects·Areas·Resources·Archive 4개 최상위 폴더. 실행 가능성 기준 분류."
+type: "fixed"
+folders:
+  - path: ["Projects"]
+    keywords: ["프로젝트", "마감", "런칭", "출시", "완료 예정", "이번 달", "이번 주 목표"]
+  - path: ["Areas"]
+    keywords: ["건강", "재정", "루틴", "습관", "관계", "자기계발", "비즈니스 운영"]
+  - path: ["Resources"]
+    keywords: ["참고", "자료", "정보", "공부", "학습", "투자", "AI", "마케팅", "기술"]
+  - path: ["Archive"]
+    keywords: []

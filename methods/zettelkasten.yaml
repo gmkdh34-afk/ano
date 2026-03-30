@@ -1,0 +1,13 @@
+id: "zettelkasten"
+name: "Zettelkasten"
+description: "Fleeting→Literature→Permanent 3단계 흐름. 지식 연결 네트워크."
+type: "fixed"
+folders:
+  - path: ["Fleeting Notes"]
+    keywords: ["아이디어", "생각", "단상", "메모", "기록", "느낌"]
+  - path: ["Literature Notes"]
+    keywords: ["책", "강의", "영상", "출처", "인용", "요약", "분석", "리뷰"]
+  - path: ["Permanent Notes"]
+    keywords: ["통찰", "원칙", "결론", "나의 생각", "깨달음"]
+  - path: ["Maps of Content"]
+    keywords: []

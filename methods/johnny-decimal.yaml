@@ -1,0 +1,5 @@
+id: "johnny-decimal"
+name: "Johnny.Decimal"
+description: "10개 Area × 10개 Category = 최대 100개 번호 ID. 번호로 위치 암기."
+type: "hierarchical"
+folders: []
